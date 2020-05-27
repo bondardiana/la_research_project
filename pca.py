@@ -1,7 +1,6 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 import numpy as np
-from sklearn.decomposition import PCA
 
 
 def matr_pca(A):
@@ -31,9 +30,3 @@ if __name__ == '__main__':
          [3, 5, 6],
          [7, 8, 10]]
     print(matr_pca(A))
-    X = np.array(A)
-    pca = PCA(n_components=2)
-    principalComponents = pca.fit_transform(X)
-    principalDf = pd.DataFrame(data=principalComponents, columns=[
-                               'principal component 1', '2'])
-    print(principalDf)
