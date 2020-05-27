@@ -82,13 +82,6 @@ from matplotlib import pyplot as plt
 
 pca = PCA()
 res = pca.fit_transform(matrix)
-
-
-#print(res)
-for i in range(0, len(res)):
-    plt.text(res[i][0], res[i][1], dictt[i], fontdict=None)
-plt.show()
-
 new_res = []
 for el in res:
     el = list(el)
@@ -111,3 +104,33 @@ def find_closest_embeddings_pca(word, number):
     return    result[:number]
 
 print(find_closest_embeddings_pca(dictt.index("china"))[:20])
+
+def matr_pca_2_comp(A):
+    # 1.Take the whole dataset consisting of d+1 dimensions, scale it
+    # and ignore the labels such that our new dataset becomes d dimensional.
+
+    A_scaled = StandardScaler().fit_transform(numpy.array(A))
+
+    # Compute the mean for every dimension of the whole dataset.
+    A_mean = numpy.mean(A, axis=0)
+
+    # Compute the covariance matrix of the whole dataset.
+    A_scaled_tr = A_scaled.T
+    covariance_matrix = numpy.cov(A_scaled_tr)
+    # Compute eigenvectors and the corresponding eigenvalues.
+    eig_vals, eig_vecs = numpy.linalg.eig(covariance_matrix)
+    # k eigenvectors with the largest eigenvalues to form a d × k dimensional matrix
+    # Use this d × k eigenvector matrix to transform the samples onto the new subspace.
+    result = pandas.DataFrame(columns=['PC1', 'PC2'])
+    result['PC1'] = A_scaled.dot(eig_vecs.T[0])
+    result['PC2'] = A_scaled.dot(eig_vecs.T[1])
+    return result
+
+res2 = matr_pca_2_comp(matrix)
+
+#print(res)
+for i in range(0, len(res)):
+    plt.text(res2["PC1"][i], res2["PC2"][i], dictt[i], fontdict=None)
+plt.show()
+
+
