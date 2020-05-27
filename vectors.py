@@ -50,7 +50,7 @@ def closest(token_list, vec_to_check, n=10):
                   reverse=True)[:n]
 
 
-print(spacy_closest(word_dict, word_dict["monday"], n=5))
+print(closest(word_dict, word_dict["monday"], n=5))
 
 
 words =  list(word_dict.keys())
