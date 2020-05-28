@@ -6,18 +6,19 @@ import re
 import textblob
 import nltk
 import csv
+from top_liked import top_liked_tweets()
 
 
-'''In this file we deletenig unnecessary words from tweets and filter(tokenization, lemmatization, normalization)'''   
-
-favs = []
+'''In this file we deletenig unnecessary words from tweets and filter(tokenization, lemmatization, normalization)'''
 
 
 def selecting_tweets():
-    myfile = open("aaa.csv", 'r', encoding="utf-8", errors='ignore')
+    myfile = open("kuk.csv", 'r', encoding="utf-8", errors='ignore')
     i = 0
     j = 0
     twits = []
+    user = []
+    favs = []
     for line in myfile:
         i += 1
         line = line.split(",")
@@ -35,6 +36,8 @@ def selecting_tweets():
                 text2 = text2.lower()
                 twits.append(text2)
                 fav = line[11]
+                fav = line[11]
+                user.append(line[3])
                 try:
                     favs.append(int(fav))
                 except:
@@ -46,10 +49,12 @@ def selecting_tweets():
             print(i)
             print(int(line[11]))
             break
-    return twits
+    return twits, favs, user
 
 
-twits = selecting_tweets()
+twits, favs, user = selecting_tweets()
+top_liked_tweets(twits, favs, user)
+
 
 def filtration(twits):
     res = []
@@ -58,7 +63,7 @@ def filtration(twits):
         lst = nltk.word_tokenize(i)
         lst = nltk.pos_tag(lst)
         PRP = ['i', 'he', 'she', 'it', 'they', 'is', 'are', 'have', 'has', 'had', 'my', 'her', 'his', 'their',
-               'did', 'done', 'don', 'dont', 'isn', 'isnt', 'hes', 'be', 'been', 'was', 'were', 'will', 'much', 'more', 'do', 'does','out']
+               'did', 'done', 'don', 'dont', 'isn', 'isnt', 'hes', 'be', 'been', 'was', 'were', 'will', 'much', 'more', 'do', 'does', 'out']
         types = ['JJ', 'JJR', 'JJS', 'NN', 'NNS', 'NNP',
                  'NNPS', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
         verbs = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
@@ -89,7 +94,7 @@ def mish_words(twits):
     for i in range(len(twits)):
         r = twits[i].split(' ')
         for k in range(len(r)):
-            word_set.add(r[k])       
+            word_set.add(r[k])
     word_list = list(word_set)
     res = ''
     res += str(word_list)
@@ -103,7 +108,7 @@ def mish_words(twits):
         for k in range(len(word_list)):
             count_word[k] = r.count(word_list[k])*favs[i]
         row = [i]+count_word
-        res += str(row )
+        res += str(row)
         res += '\n'
         writer.writerow(row)
     return res
