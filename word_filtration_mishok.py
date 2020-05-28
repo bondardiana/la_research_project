@@ -6,7 +6,7 @@ import re
 import textblob
 import nltk
 import csv
-from top_liked import top_liked_tweets()
+from top_liked import top_liked_tweets
 
 
 '''In this file we deletenig unnecessary words from tweets and filter(tokenization, lemmatization, normalization)'''
