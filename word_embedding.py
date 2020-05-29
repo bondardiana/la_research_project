@@ -1,7 +1,10 @@
-
 import numpy
 import math
+import pandas
+from pca import pca1
+from sklearn.preprocessing import StandardScaler
 from scipy import spatial
+
 def get_bag(n):
     """
     this function reads twits and make co-occurency matrix from them
@@ -31,6 +34,7 @@ def get_bag(n):
     for line in ff:
         new_line = ""
         i=0
+
         for word in line.split():
             if first_dict[word] > n:
                 new_line += word
@@ -74,14 +78,10 @@ matrix , dictt = get_bag(0)
 #print(matrix)
 #print(dictt)
 
+res = pca1(matrix, len(matrix))
 
 n_dictt=[]
 
-from sklearn.decomposition import PCA
-from matplotlib import pyplot as plt
-
-pca = PCA()
-res = pca.fit_transform(matrix)
 new_res = []
 for el in res:
     el = list(el)
@@ -92,7 +92,7 @@ lsss=[]
 new_d = {}
 for i,el in enumerate(dictt):
    new_d[el]= res[i]
-
+   
 def euclidean_distance(x, y):
     """Computes the Euclidean distance between two 1-D arrays.  """""
     distance = math.sqrt(sum([(a - b) ** 2 for a, b in zip(x, y)]))
@@ -100,37 +100,20 @@ def euclidean_distance(x, y):
 
 def find_closest_embeddings_pca(word, number):
 
-    result =  sorted(new_d.keys(), key=lambda wordd: euclidean_distance(new_res[dictt.index(wordd)], new_res[word]))
+    result =  sorted(new_d.keys(), key=lambda wordd: euclidean_distance(new_res[dictt.index(wordd)], new_res[dictt.index(word)]))
     return    result[:number]
 
-print(find_closest_embeddings_pca(dictt.index("china"))[:20])
+print(find_closest_embeddings_pca("china", 20))
 
-def matr_pca_2_comp(A):
-    # 1.Take the whole dataset consisting of d+1 dimensions, scale it
-    # and ignore the labels such that our new dataset becomes d dimensional.
+#visualisation
+from matplotlib import pyplot as plt
 
-    A_scaled = StandardScaler().fit_transform(numpy.array(A))
-
-    # Compute the mean for every dimension of the whole dataset.
-    A_mean = numpy.mean(A, axis=0)
-
-    # Compute the covariance matrix of the whole dataset.
-    A_scaled_tr = A_scaled.T
-    covariance_matrix = numpy.cov(A_scaled_tr)
-    # Compute eigenvectors and the corresponding eigenvalues.
-    eig_vals, eig_vecs = numpy.linalg.eig(covariance_matrix)
-    # k eigenvectors with the largest eigenvalues to form a d × k dimensional matrix
-    # Use this d × k eigenvector matrix to transform the samples onto the new subspace.
-    result = pandas.DataFrame(columns=['PC1', 'PC2'])
-    result['PC1'] = A_scaled.dot(eig_vecs.T[0])
-    result['PC2'] = A_scaled.dot(eig_vecs.T[1])
-    return result
-
-res2 = matr_pca_2_comp(matrix)
-
-#print(res)
-for i in range(0, len(res)):
-    plt.text(res2["PC1"][i], res2["PC2"][i], dictt[i], fontdict=None)
+res2 = pca1(matrix, 2)
+print(res2)
+for i in range(0, len(res2)):
+    try:
+        plt.text(res2[i][0], res2[i][1], dictt[i], fontdict=None)
+    except Exception as e:
+        print(e)
+        break
 plt.show()
-
-
